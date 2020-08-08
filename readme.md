@@ -1,5 +1,5 @@
 # PQS
-DSA Postquantum standardisation candidate reported here: https://crypto-kantiana.com/main_papers/main_Signature.pdf
+DSA Postquantum standardization candidate reported here: https://crypto-kantiana.com/main_papers/main_Signature.pdf
 
 # Requirements
 - gcc compiler >= 9.2.1
@@ -18,7 +18,7 @@ Run PQS testing script
 ```
 All the desired parameters for testing script as well as the signature parameters itself could be adjusted in header files `config.h`, `params.h`.
 
-# Useage as an external library
+# Usage as an external library
 
 In order to use this implementation in external project, please include `sign.h` header file to your project and follow the instructions below.
 ```sh
