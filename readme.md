@@ -20,12 +20,12 @@ All the desired parameters for testing script as well as the signature parameter
 
 # Usage as an external library
 
-In order to use this implementation in external project, please include `sign.h` header file to your project and follow the instructions below.
+In order to use this implementation in external project, please include `sign.h` header file into your project and follow the instructions below.
 ```sh
 #include "~/PQS/Signature/sign.h"
 ```
 
-1. Allocate memory for public key, private key and a signature by declaring variables having special data types `vk_t`, `sk_t`, `sig_t` respectively;
+1. Allocate memory for public key, private key and a signature by declaring variables having special data types `vk_t`, `sk_t`, `signat_t` respectively;
 2. Generate a keypair by calling
 ```sh
 PQS_keygen(vk, sk);
