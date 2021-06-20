@@ -50,6 +50,6 @@ randombytes_init(unsigned char *entropy_input,
                  int security_strength);
 
 int
-randombytes(unsigned char *x, unsigned long long xlen);
+random_bytes(unsigned char *x, unsigned long long xlen);
 
 #endif /* rng_h */

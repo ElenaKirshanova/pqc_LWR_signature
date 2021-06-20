@@ -6,17 +6,15 @@
 #include <sys/syscall.h>
 #include "randombytes.h"
 
-static int fd = -1;
-static void randombytes_fallback(unsigned char *x, size_t xlen)
+void randombytes_fallback (unsigned char *x, size_t xlen)
 {
   int i;
+  static int fd = -1;
 
-  if (fd == -1) {
-    for (;;) {
+  while (fd == -1) {
       fd = open("/dev/urandom", O_RDONLY);
       if (fd != -1) break;
       sleep(1);
-    }
   }
 
   while (xlen > 0) {
@@ -33,7 +31,27 @@ static void randombytes_fallback(unsigned char *x, size_t xlen)
   }
 }
 
-#ifdef SYS_getrandom
+#if defined __GLIBC__ && (__GLIBC__ > 2  || __GLIBC__MINOR__ > 24)
+void randombytes(unsigned char *buf, size_t buflen)
+{
+  size_t d = 0;
+  int r;
+
+  while(d < buflen)
+  {
+    errno = 0;
+    r = syscall(SYS_getrandom, buf, buflen - d, 0);
+    if(r < 0)
+    {
+      if (errno == EINTR) continue;
+      randombytes_fallback(buf, buflen);
+      return;
+    }
+    buf += r;
+    d += r;
+  }
+}
+#elif defined SYS_getrandom
 void randombytes(unsigned char *buf, size_t buflen)
 {
   size_t d = 0;
@@ -59,4 +77,3 @@ void randombytes(unsigned char *buf, size_t buflen)
   randombytes_fallback(buf, buflen);
 }
 #endif
-
