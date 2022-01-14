@@ -97,9 +97,9 @@ void debug_verify (poly &cprime, polyveck &w) {
 
     int i;
 
-    serialize_poly (cprime, cp_bytes);
+    serialize_poly (cprime, cp_bytes, PQS_d);
     for (i = 0; i < PQS_k; i++) 
-        serialize_poly (w.polynomial[i], &(w_bytes[i * PQS_n * 4]));
+        serialize_poly (w.polynomial[i], &(w_bytes[i * PQS_n * 4]), PQS_nu);
 
     printBstr (cp_str, cp_bytes, PQS_n * 4);
     printBstr (w_str, w_bytes, PQS_k * PQS_n * 4);

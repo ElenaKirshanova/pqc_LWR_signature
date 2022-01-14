@@ -1,11 +1,11 @@
-CC       = g++ -std=c++11
+CC       = g++
 CFLAGS   = -c -Wall -O3
 LDLIBS   = -lcrypto
 
 OBJS     = keygen.o sign.o verify.o
 TEST_OBJ = test/cpucycles.o
 KAT_OBJ  = KAT/rng.o KAT/api.o
-UTIL_OBJ = utils/arith.o utils/core.o utils/fips202.o utils/poly_mul.o utils/randombytes.o utils/serialize.o
+UTIL_OBJ = utils/arith.o utils/core.o utils/fips202.o utils/poly_mul.o utils/randombytes.o utils/serialize_common.o utils/serialize.o
 UTIL_HDR = utils/params.h utils/matrix_A.h utils/utils.h
 
 INSTALL_PATH?=/usr/local

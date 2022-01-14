@@ -186,11 +186,11 @@ void debug_sign (sk_t &sk, vk_t &vk, polyvecl &y, signat_t &sig, polyveck &w) {
     pack_signed_message (sig_bytes, sig, NULL, 0);
 
     for (i = 0; i < PQS_k; i++) 
-        serialize_poly (w.polynomial[i], &(w_bytes[i * PQS_n * 4]));
+        serialize_poly (w.polynomial[i], &(w_bytes[i * PQS_n * 4]), PQS_nu);
 
     serialize_secret (sk, sk_bytes);
     serialize_verifykey (vk, vk_bytes);
-    serialize_polyvecl (y, y_bytes);
+    serialize_polyvecl (y, y_bytes, PQS_gamma_bits);
 
     printBstr (s_str, sk_bytes, SECRETKEYBYTES);
     printBstr (y_str, y_bytes, SECRETKEYBYTES);
