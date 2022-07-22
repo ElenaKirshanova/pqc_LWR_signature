@@ -5,9 +5,11 @@
  * from https://twitter.com/tweetfips202
  * by Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe */
 
-#include <stdint.h>
+
 #include "fips202.h"
 #include "params.h"
+#include <cstdint>
+#include <cstring>
 
 #define NROUNDS 24
 #define ROL(a, offset) ((a << offset) ^ (a >> (64-offset)))
@@ -368,9 +370,7 @@ static void keccak_absorb(uint64_t *s,
   unsigned int i;
   unsigned char t[200];
 
-  /* Zero state */
-  for(i = 0; i < 25; ++i)
-    s[i] = 0;
+  memset (s, 0, 200);  // number of bytes = 25 * sizeof(int64_t) = 200
 
   while(mlen >= r) {
     for(i = 0; i < r/8; ++i)
@@ -381,15 +381,13 @@ static void keccak_absorb(uint64_t *s,
     m += r;
   }
 
-  for(i = 0; i < r; ++i)
-    t[i] = 0;
-  for(i = 0; i < mlen; ++i)
-    t[i] = m[i];
-  t[i] = p;
+  memset(t, 0, r * sizeof(char));
+  memcpy(t, m, mlen * sizeof(char));  // set first mlen elements of t = m
+
+  t[mlen] = p;
   t[r-1] |= 128;
   for(i = 0; i < r/8; ++i)
     s[i] ^= load64(t + 8*i);
-
 }
 
 /*************************************************
@@ -445,11 +443,9 @@ void shake128_stream_init(keccak_state *state,
                           const unsigned char seed[SEEDBYTES],
                           uint16_t nonce)
 {
-  unsigned int i;
   unsigned char buf[SEEDBYTES + 2];
 
-  for(i = 0; i < SEEDBYTES; ++i)
-    buf[i] = seed[i];
+  memcpy(buf, seed, SEEDBYTES * sizeof(unsigned char));
   buf[SEEDBYTES] = nonce;
   buf[SEEDBYTES+1] = nonce >> 8;
 
@@ -497,11 +493,9 @@ void shake256_stream_init(keccak_state *state,
                           const unsigned char seed[CRHBYTES],
                           uint16_t nonce)
 {
-  unsigned int i;
   unsigned char buf[CRHBYTES + 2];
 
-  for(i = 0; i < CRHBYTES; ++i)
-    buf[i] = seed[i];
+  memcpy(buf, seed, CRHBYTES * sizeof(unsigned char));
   buf[CRHBYTES] = nonce;
   buf[CRHBYTES+1] = nonce >> 8;
 
@@ -543,7 +537,6 @@ void shake128(unsigned char *output,
               const unsigned char *input,
               unsigned long long inlen)
 {
-  unsigned int i;
   unsigned long nblocks = outlen/SHAKE128_RATE;
   unsigned char t[SHAKE128_RATE];
   uint64_t s[25];
@@ -556,8 +549,7 @@ void shake128(unsigned char *output,
 
   if(outlen) {
     keccak_squeezeblocks(t, 1, s, SHAKE128_RATE);
-    for(i = 0; i < outlen; ++i)
-      output[i] = t[i];
+    memcpy(output, t, outlen * sizeof(unsigned char));
   }
 }
 
@@ -576,7 +568,6 @@ void shake256(unsigned char *output,
               const unsigned char *input,
               unsigned long long inlen)
 {
-  unsigned int i;
   unsigned long nblocks = outlen/SHAKE256_RATE;
   unsigned char t[SHAKE256_RATE];
   uint64_t s[25];
@@ -589,7 +580,6 @@ void shake256(unsigned char *output,
 
   if(outlen) {
     keccak_squeezeblocks(t, 1, s, SHAKE256_RATE);
-    for(i = 0; i < outlen; ++i)
-      output[i] = t[i];
+    memcpy(output, t, outlen * sizeof(unsigned char));
   }
 }

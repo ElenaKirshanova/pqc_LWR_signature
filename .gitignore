@@ -1,0 +1,7 @@
+
+*.o
+*.a
+test/pqs_test
+test/sk.bin
+KAT/PQCgenKAT_sign
+

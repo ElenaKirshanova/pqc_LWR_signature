@@ -1,37 +1,20 @@
-#ifndef SIGN_H
-#define SIGN_H
+#ifndef SIGN
+#define SIGN
 
-#include "params.h"
-#include "getCPUTime.c"
+#include "utils/utils.h"
 
-void polyw1_pack(uint8_t *r, const poly *a);
+void sign (sk_t &sk, vk_t &vk, unsigned char *m, unsigned int mlen, signat_t &sig);
+int sign_from_keybytes (unsigned char *sm, unsigned long long* smlen,
+                        unsigned char *m, unsigned long long mlen,
+                        unsigned char *sk, unsigned char *pk);
 
-void challenge (poly &c, const uint8_t mu[CRHBYTES], polyveck &w1);
+void gen_seed (unsigned char *seed, sk_t &sk, unsigned char *m, unsigned int mlen);
+void generate_y (polyvecl &y, unsigned char *seed);
+void calculate_c (poly &c, polymatkl A, polyvecl y, const unsigned char *m, unsigned int mlen);
+void calculate_z (polyvecl &z, polyvecl y, polyvecl s, poly c);
+void calculate_w (polyveck &w, polymatkl A, polyvecl z, polyveck t, poly c);
+bool validate_sign (polyveck w, polyvecl z);
 
-void BS2POL(const unsigned char *bytes, poly &data);
-
-void fillpolyrot(polyrot &a);
-
-void GenSecret_s(polyvecl &a);
-
-void GenSecret_y(polyvecl &a, const unsigned char *seed);
-
-void GenMatrix(polymatkl &A, const unsigned char *seed);
-
-uint32_t round (uint32_t x);
-
-uint32_t MSB (uint32_t x, uint32_t d);
-
-uint32_t LSB (uint32_t x, uint32_t d);
-
-void matrixpoly(polymatkl &mat, polyvecl &a, polyveck &res);
-
-void GenSeed(unsigned char *seed);
-
-void PQS_keygen(vk_t &vk, sk_t &sk);
-
-void PQS_sign(signat_t &sig, const unsigned char *m, uint32_t mlen, sk_t &sk, vk_t &vk);
-
-bool PQS_verify(signat_t &sig, const unsigned char *m, uint32_t mlen, vk_t &vk);
+void debug_sign (sk_t &sk, vk_t &vk, polyvecl &y, signat_t &sig, polyveck &w);
 
 #endif
