@@ -10,6 +10,8 @@ void challenge (poly &c, const uint8_t mu[CRHBYTES], polyveck &w1);
 
 void BS2POL(const unsigned char *bytes, poly &data);
 
+void GenSeed(unsigned char *seed);
+
 void fillpolyrot(polyrot &a);
 
 void GenSecret_s(polyvecl &a);
@@ -25,8 +27,6 @@ uint32_t MSB (uint32_t x, uint32_t d);
 uint32_t LSB (uint32_t x, uint32_t d);
 
 void matrixpoly(polymatkl &mat, polyvecl &a, polyveck &res);
-
-void GenSeed(unsigned char *seed);
 
 void PQS_keygen(vk_t &vk, sk_t &sk);
 

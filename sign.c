@@ -107,6 +107,12 @@ void BS2POL(const unsigned char *bytes, poly &data){
 
 }
 
+// Generates SEEDBYTES random bytes
+void GenSeed(unsigned char *seed){
+	randombytes(seed, SEEDBYTES);
+	shake128(seed, SEEDBYTES, seed, SEEDBYTES); // for not revealing system RNG state
+}
+
 // Fill in a rotation matrix (polymatkl.elem[][].row[1..PQS_n-1])
 void fillpolyrot(polyrot &a){
 	int i,j;
@@ -123,8 +129,7 @@ void fillpolyrot(polyrot &a){
 void GenSecret_s(polyvecl &a) 
 {
 	unsigned char seed[SEEDBYTES];
-	randombytes(seed, SEEDBYTES);
-	shake128(seed, SEEDBYTES, seed, SEEDBYTES); // for not revealing system RNG state
+	GenSeed(seed);
 	
 	unsigned int one_vector = PQS_n;
 	unsigned int byte_bank_length=PQS_l*one_vector;
@@ -162,17 +167,17 @@ void GenSecret_s(polyvecl &a)
 
 // Generate a vector of length l of polynomials with coefficients in [-PQS_gamma+1..PQS_gamma-1].
 // Performs rejection sampling on output stream of shake128()
-void GenSecret_y(polyvecl &a, const unsigned char *seed) 
+void GenSecret_y(polyvecl &a, unsigned char *seed) 
 {
-  unsigned int one_vector=32*PQS_n/10;
-  unsigned int byte_bank_length=PQS_l*one_vector+10;
+	unsigned int one_vector=32*PQS_n/10;
+	unsigned int byte_bank_length=PQS_l*one_vector+10;
   	// Note: buffer size of 2465 bytes guarantees successful rejection sampling with probability >=0.999
 	// following the Hoeffding's inequality (this bound is calculated for default parameters PQS_gamma=1048096, PQS_n=256, PQS_l=3)
-  unsigned char buf[byte_bank_length];
+	unsigned char buf[byte_bank_length+3];
 
-  shake128(buf,byte_bank_length,seed,SEEDBYTES);
+	shake128(buf,byte_bank_length+3,seed,SEEDBYTES);
 
-uint32_t coef=0;
+	uint32_t coef=0;
 	unsigned int ncoeffs=0;
 	unsigned int pos = 0;
 	int j=0;
@@ -198,6 +203,7 @@ uint32_t coef=0;
 	
 	if(ncoeffs < PQS_n){
 		cerr << "ERROR :: Too short buffer in GenSecret_y(), restarting...";
+		GenSeed(seed);
 		GenSecret_y(a, seed);
 	}
 }
@@ -267,12 +273,6 @@ void matrixpoly(polymatkl &mat, polyvecl &a, polyveck &res){
 			}
 		}
 	}
-}
-
-// Generates SEEDBYTES random bytes
-void GenSeed(unsigned char *seed){
-	randombytes(seed, SEEDBYTES);
-	shake128(seed, SEEDBYTES, seed, SEEDBYTES); // for not revealing system RNG state
 }
 
 
